@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Upload Your Move Files</title>
+  <title>Upload Your Move Files - {{ $json.companyName }}</title>
   <style>
+    :root {
+      /* Just Move Vancouver Theme Colors - Easily replaceable */
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --accent-color: #ea580c;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --background-light: #f9fafb;
+      --background-dark: #ffffff;
+      --border-color: #e5e7eb;
+      --card-background: #f3f4f6;
+    }
+    
     * {
       margin: 0;
       padding: 0;
@@ -10,7 +23,7 @@
     }
     
     body {
-      background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       display: flex;
@@ -20,16 +33,17 @@
     }
     
     .form-container {
-      background: #2a2a2a;
+      background: var(--background-dark);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
       overflow: hidden;
       width: 100%;
       max-width: 500px;
     }
     
     .header {
-      background: linear-gradient(135deg, #b83c3c 0%, #8b2c2c 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       padding: 30px;
       text-align: center;
       color: white;
@@ -52,6 +66,24 @@
       100% { transform: translateX(100%); }
     }
     
+    .header-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      margin: 0 auto 15px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .header-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
     .header-icon {
       background: rgba(0, 0, 0, 0.3);
       width: 60px;
@@ -62,6 +94,13 @@
       justify-content: center;
       margin: 0 auto 15px;
       font-size: 24px;
+    }
+    
+    .company-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
     }
     
     .header h1 {
@@ -77,12 +116,12 @@
     
     .form-content {
       padding: 30px;
-      background: #3a3a3a;
+      background: var(--card-background);
     }
     
     .security-note {
-      background: rgba(180, 60, 60, 0.1);
-      border: 1px solid rgba(180, 60, 60, 0.3);
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.2);
       border-radius: 8px;
       padding: 15px;
       margin-bottom: 25px;
@@ -92,8 +131,8 @@
     }
     
     .security-icon {
-      background: rgba(180, 60, 60, 0.2);
-      color: #ff6b6b;
+      background: rgba(37, 99, 235, 0.2);
+      color: var(--primary-color);
       width: 24px;
       height: 24px;
       border-radius: 50%;
@@ -106,7 +145,7 @@
     }
     
     .security-note p {
-      color: #ccc;
+      color: var(--text-dark);
       font-size: 13px;
       line-height: 1.4;
       margin: 0;
@@ -118,35 +157,35 @@
     
     .form-group label {
       display: block;
-      color: #fff;
+      color: var(--text-dark);
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 8px;
     }
     
     .required {
-      color: #ff6b6b;
+      color: var(--accent-color);
     }
     
     input[type="email"] {
       width: 100%;
       padding: 12px 16px;
-      background: #4a4a4a;
-      border: 1px solid #555;
+      background: var(--background-dark);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      color: white;
+      color: var(--text-dark);
       font-size: 14px;
       transition: all 0.3s ease;
     }
     
     input[type="email"]:focus {
       outline: none;
-      border-color: #b83c3c;
-      box-shadow: 0 0 0 3px rgba(184, 60, 60, 0.1);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
     
     input[type="email"]::placeholder {
-      color: #999;
+      color: var(--text-light);
     }
     
     .file-upload-container {
@@ -155,11 +194,11 @@
     }
     
     .file-upload-area {
-      border: 2px dashed #666;
+      border: 2px dashed var(--border-color);
       border-radius: 8px;
       padding: 30px;
       text-align: center;
-      background: #4a4a4a;
+      background: var(--background-dark);
       transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
@@ -167,29 +206,29 @@
     
     .file-upload-area:hover,
     .file-upload-area.dragover {
-      border-color: #b83c3c;
-      background: rgba(184, 60, 60, 0.05);
+      border-color: var(--primary-color);
+      background: rgba(37, 99, 235, 0.05);
     }
     
     .file-upload-icon {
       font-size: 48px;
-      color: #666;
+      color: var(--text-light);
       margin-bottom: 15px;
     }
     
     .file-upload-area:hover .file-upload-icon {
-      color: #b83c3c;
+      color: var(--primary-color);
     }
     
     .file-upload-text {
-      color: #ccc;
+      color: var(--text-dark);
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 5px;
     }
     
     .file-upload-subtext {
-      color: #999;
+      color: var(--text-light);
       font-size: 13px;
     }
     
@@ -204,8 +243,8 @@
     }
     
     .file-item {
-      background: rgba(184, 60, 60, 0.1);
-      border: 1px solid rgba(184, 60, 60, 0.3);
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.2);
       border-radius: 6px;
       padding: 8px 12px;
       margin-bottom: 8px;
@@ -215,20 +254,20 @@
     }
     
     .file-name {
-      color: #fff;
+      color: var(--text-dark);
       font-size: 13px;
       flex-grow: 1;
     }
     
     .file-size {
-      color: #999;
+      color: var(--text-light);
       font-size: 12px;
     }
     
     .submit-btn {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(135deg, #b83c3c 0%, #8b2c2c 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -241,7 +280,7 @@
     
     .submit-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 5px 15px rgba(184, 60, 60, 0.3);
+      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
     }
     
     .submit-btn:active {
@@ -249,7 +288,7 @@
     }
     
     .submit-btn:disabled {
-      background: #666;
+      background: var(--text-light);
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
@@ -267,13 +306,13 @@
     .success {
       background: rgba(34, 197, 94, 0.1);
       border: 1px solid rgba(34, 197, 94, 0.3);
-      color: #4ade80;
+      color: #059669;
     }
     
     .error {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #f87171;
+      background: rgba(234, 88, 12, 0.1);
+      border: 1px solid rgba(234, 88, 12, 0.3);
+      color: var(--accent-color);
     }
     
     .loading {
@@ -295,7 +334,13 @@
 <body>
   <div class="form-container">
     <div class="header">
-      <div class="header-icon">📦</div>
+      <div class="header-logo" style="display: {{ $json.logoURL ? 'flex' : 'none' }};">
+        <img src="{{ $json.logoURL }}" alt="{{ $json.companyName }} Logo">
+      </div>
+      <div class="header-icon" style="display: {{ $json.logoURL ? 'none' : 'flex' }};">
+        🚛
+      </div>
+      <div class="company-name">{{ $json.companyName }}</div>
       <h1>Upload Move Photos</h1>
       <p>Share images of items you want to move</p>
     </div>
