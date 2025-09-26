@@ -114,27 +114,6 @@
       opacity: 0.9;
     }
     
-    .customer-info {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-top: 15px;
-      text-align: left;
-      display: none;
-    }
-    
-    .customer-info h3 {
-      font-size: 14px;
-      margin-bottom: 5px;
-      opacity: 0.8;
-    }
-    
-    .customer-info p {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 2px 0;
-    }
-    
     .form-content {
       padding: 30px;
       background: var(--card-background);
@@ -329,18 +308,6 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
-    .quote-badge {
-      background: rgba(234, 88, 12, 0.1);
-      border: 1px solid rgba(234, 88, 12, 0.3);
-      color: var(--accent-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 15px;
-    }
   </style>
 </head>
 <body>
@@ -355,19 +322,9 @@
       <div class="company-name" id="companyName">Just Move Vancouver</div>
       <h1>Upload Move Photos</h1>
       <p>Share images of items you want to move</p>
-      
-      <div class="customer-info" id="customerInfo">
-        <h3>Quote for:</h3>
-        <p id="customerNameDisplay"></p>
-        <p id="quoteIdDisplay" style="font-size: 14px; opacity: 0.8;"></p>
-      </div>
     </div>
     
     <div class="form-content">
-      <div id="quoteBadge" class="quote-badge" style="display: none;">
-        Quote #<span id="quoteBadgeNumber"></span>
-      </div>
-      
       <div class="security-note">
         <div class="security-icon">🔒</div>
         <div>
@@ -376,10 +333,8 @@
       </div>
       
       <form id="uploadForm" enctype="multipart/form-data">
-        <!-- Hidden fields for quote tracking -->
-        <input type="hidden" id="quoteId" name="quoteId">
-        <input type="hidden" id="customerName" name="customerName">
-        <input type="hidden" id="companyNameHidden" name="companyName">
+        <!-- Hidden field for email -->
+        <input type="hidden" id="customerEmail" name="customerEmail">
         
         <div class="form-group">
           <label>Upload Photos <span class="required">*</span></label>
@@ -407,29 +362,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Get URL parameters
       const urlParams = new URLSearchParams(window.location.search);
-      const quoteId = urlParams.get('quoteId');
-      const customerName = urlParams.get('customer');
       const customerEmail = urlParams.get('email');
-      const companyName = urlParams.get('company');
       
-      // Update page with dynamic content
-      if (quoteId) {
-        document.getElementById('quoteId').value = quoteId;
-        document.getElementById('quoteBadge').style.display = 'block';
-        document.getElementById('quoteBadgeNumber').textContent = quoteId;
-        document.getElementById('quoteIdDisplay').textContent = `Quote ID: ${quoteId}`;
-      }
-      
-      if (customerName) {
-        document.getElementById('customerName').value = customerName;
-        document.getElementById('customerNameDisplay').textContent = customerName;
-        document.getElementById('customerInfo').style.display = 'block';
-      }
-      
-      if (companyName) {
-        document.getElementById('companyNameHidden').value = companyName;
-        document.getElementById('companyName').textContent = companyName;
-        document.title = `Upload Your Move Files - ${companyName}`;
+      // Update page with email
+      if (customerEmail) {
+        document.getElementById('customerEmail').value = customerEmail;
       }
       
       const form = document.getElementById('uploadForm');
@@ -507,8 +444,7 @@
         e.preventDefault();
         
         const files = document.getElementById('files').files;
-        const quoteIdValue = document.getElementById('quoteId').value;
-        const companyNameValue = document.getElementById('companyNameHidden').value;
+        const customerEmailValue = document.getElementById('customerEmail').value;
         
         if (files.length === 0) {
           showMessage('Please select at least one file.', 'error');
@@ -521,9 +457,8 @@
         
         const formData = new FormData();
         
-        // Include quote tracking data
-        if (quoteIdValue) formData.append('quoteId', quoteIdValue);
-        if (companyNameValue) formData.append('companyName', companyNameValue);
+        // Include email for identification
+        if (customerEmailValue) formData.append('email', customerEmailValue);
         
         for (let i = 0; i < files.length; i++) {
           formData.append('file', files[i]);
@@ -536,11 +471,7 @@
           });
           
           if (response.ok) {
-            let successMessage = 'Photos uploaded successfully! We\'ll review your items and get back to you with a quote.';
-            if (quoteIdValue) {
-              successMessage = `Photos for Quote #${quoteIdValue} uploaded successfully! We'll review your items and finalize your quote.`;
-            }
-            showMessage(successMessage, 'success');
+            showMessage('Photos uploaded successfully! We\'ll review your items and get back to you with a quote.', 'success');
             form.reset();
             selectedFilesDiv.innerHTML = '';
           } else {
