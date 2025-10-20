@@ -329,6 +329,7 @@
         <div class="security-icon">🔒</div>
         <div>
           <p><strong>Your files are secure:</strong> All uploads are encrypted and only used to provide accurate moving quotes. We never share your information with third parties.</p>
+          <p style="margin-top: 8px; font-size: 12px; opacity: 0.8;"><strong>Uploading as:</strong> <span id="displayEmail"></span></p>
         </div>
       </div>
       
@@ -364,10 +365,23 @@
       const urlParams = new URLSearchParams(window.location.search);
       const customerEmail = urlParams.get('email');
       
-      // Update page with email
-      if (customerEmail) {
-        document.getElementById('customerEmail').value = customerEmail;
+      // Restrict access if email is not present
+      if (!customerEmail) {
+        const message = document.getElementById('message');
+        message.textContent = '⚠️ Access Denied: This page requires a valid email parameter. Please use the link provided in your email.';
+        message.className = 'error';
+        message.style.display = 'block';
+        
+        // Disable form
+        document.getElementById('uploadForm').style.opacity = '0.5';
+        document.getElementById('uploadForm').style.pointerEvents = 'none';
+        document.getElementById('submitBtn').disabled = true;
+        return;
       }
+      
+      // Update page with email
+      document.getElementById('customerEmail').value = customerEmail;
+      document.getElementById('displayEmail').textContent = customerEmail;
       
       const form = document.getElementById('uploadForm');
       const message = document.getElementById('message');
@@ -457,8 +471,8 @@
         
         const formData = new FormData();
         
-        // Include email for identification
-        if (customerEmailValue) formData.append('email', customerEmailValue);
+        // Always include email (required)
+        formData.append('email', customerEmailValue);
         
         for (let i = 0; i < files.length; i++) {
           formData.append('file', files[i]);
@@ -471,15 +485,16 @@
           });
           
           if (response.ok) {
-            showMessage('Photos uploaded successfully! We\'ll review your items and get back to you with a quote.', 'success');
+            showMessage('✅ Photos uploaded successfully! We\'ll review your items and get back to you with a quote.', 'success');
             form.reset();
             selectedFilesDiv.innerHTML = '';
           } else {
-            showMessage('Upload failed. Please try again.', 'error');
+            const errorData = await response.text();
+            showMessage(`❌ Upload failed: ${response.status} - ${response.statusText}. Please try again.`, 'error');
           }
         } catch (err) {
-          showMessage('Upload failed. Please check your connection and try again.', 'error');
-          console.error(err);
+          showMessage('❌ Upload failed. Please check your internet connection and try again.', 'error');
+          console.error('Upload error:', err);
         } finally {
           // Reset button state
           submitBtn.innerHTML = 'Upload Photos';
