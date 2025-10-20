@@ -419,13 +419,27 @@
         selectedFilesDiv.innerHTML = '';
         if (fileInput.files.length === 0) return;
         
+        const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB per file
+        const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100MB total
+        let totalSize = 0;
+        let hasOversizedFile = false;
+        
         Array.from(fileInput.files).forEach((file) => {
+          totalSize += file.size;
+          
           const fileItem = document.createElement('div');
           fileItem.className = 'file-item';
           
+          // Check if file is too large
+          if (file.size > MAX_FILE_SIZE) {
+            hasOversizedFile = true;
+            fileItem.style.borderColor = '#ef4444';
+            fileItem.style.background = 'rgba(239, 68, 68, 0.1)';
+          }
+          
           const fileName = document.createElement('span');
           fileName.className = 'file-name';
-          fileName.textContent = file.name;
+          fileName.textContent = file.name + (file.size > MAX_FILE_SIZE ? ' ⚠️ Too large!' : '');
           
           const fileSize = document.createElement('span');
           fileSize.className = 'file-size';
@@ -435,6 +449,13 @@
           fileItem.appendChild(fileSize);
           selectedFilesDiv.appendChild(fileItem);
         });
+        
+        // Show warnings
+        if (hasOversizedFile) {
+          showMessage('⚠️ Some files exceed 50MB. Please compress or select smaller images.', 'error');
+        } else if (totalSize > MAX_TOTAL_SIZE) {
+          showMessage('⚠️ Total upload size exceeds 100MB. Please select fewer files.', 'error');
+        }
       }
       
       function formatFileSize(bytes) {
