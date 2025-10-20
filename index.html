@@ -479,12 +479,18 @@
           formData.append('file', files[i]);
         }
         
-        // Also send email as query parameter as backup
+        // Send email in multiple ways to ensure n8n receives it
         const uploadUrl = `https://n8n-movers-project-n8n.5gwahg.easypanel.host/webhook/upload?email=${encodeURIComponent(customerEmailValue)}`;
+        
+        console.log('Sending upload with email:', customerEmailValue);
+        console.log('Upload URL:', uploadUrl);
         
         try {
           const response = await fetch(uploadUrl, {
             method: 'POST',
+            headers: {
+              'X-Customer-Email': customerEmailValue  // Send as custom header
+            },
             body: formData
           });
           
