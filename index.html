@@ -492,15 +492,14 @@
         
         const formData = new FormData();
         
-        // Always include email (required) - sending in multiple formats to ensure n8n receives it
+        // Include email in form data
         formData.append('email', customerEmailValue);
-        formData.append('customerEmail', customerEmailValue);
         
         for (let i = 0; i < files.length; i++) {
           formData.append('file', files[i]);
         }
         
-        // Send email in multiple ways to ensure n8n receives it
+        // Send email in URL as well
         const uploadUrl = `https://n8n-movers-project-n8n.5gwahg.easypanel.host/webhook/upload?email=${encodeURIComponent(customerEmailValue)}`;
         
         console.log('Sending upload with email:', customerEmailValue);
@@ -509,9 +508,6 @@
         try {
           const response = await fetch(uploadUrl, {
             method: 'POST',
-            headers: {
-              'X-Customer-Email': customerEmailValue  // Send as custom header
-            },
             body: formData
           });
           
