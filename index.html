@@ -495,8 +495,9 @@
         // Include email in form data
         formData.append('email', customerEmailValue);
         
+        // Append each file with a unique field name
         for (let i = 0; i < files.length; i++) {
-          formData.append('file', files[i]);
+          formData.append(`file${i}`, files[i]);
         }
         
         // Send email in URL as well
