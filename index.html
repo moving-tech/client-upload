@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -573,9 +574,9 @@
         // Include jobID in form data
         formData.append('jobID', jobIDValue);
         
-        // Append each file with a unique field name
+        // Append each file with field name 'data'
         for (let i = 0; i < files.length; i++) {
-          formData.append(`file${i}`, files[i]);
+          formData.append('data', files[i]);
         }
         
         // Send jobID in URL as well
